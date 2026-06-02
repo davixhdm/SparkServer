@@ -24,7 +24,12 @@ import { startKeepAlive, stopKeepAlive } from './keepAlive';
 const app = express();
 const server = http.createServer(app);
 
-// Enable HTTP keep-alive from env
+// ====================================================================
+// TRUST PROXY (Required for Render, Heroku, etc.)
+// ====================================================================
+app.set('trust proxy', 1);
+
+// Enable HTTP keep-alive
 const KEEP_ALIVE_TIMEOUT = parseInt(process.env.SERVER_KEEP_ALIVE_TIMEOUT || '65000');
 const HEADERS_TIMEOUT = parseInt(process.env.SERVER_HEADERS_TIMEOUT || '66000');
 
@@ -110,7 +115,7 @@ app.get('/api', (_req, res) => {
   });
 });
 
-// Health check endpoints (for keep-alive and load balancers)
+// Health check endpoints
 app.get('/health', async (_req, res) => {
   const health: any = {
     success: true,
@@ -153,7 +158,7 @@ app.get('/health', async (_req, res) => {
   res.status(statusCode).json(health);
 });
 
-// Simple ping endpoint for keep-alive (always returns 200)
+// Simple ping endpoint for keep-alive
 app.get('/ping', (_req, res) => {
   res.status(200).send('pong');
 });

@@ -13,6 +13,7 @@ try {
   redisAvailable = false;
 }
 
+// Create rate limiter with trust proxy support
 function createRateLimiter(windowMs: number, max: number, message: string) {
   const config: any = {
     windowMs,
@@ -23,6 +24,13 @@ function createRateLimiter(windowMs: number, max: number, message: string) {
     handler(_req: Request, res: Response) {
       sendTooMany(res, message);
     },
+    // Disable X-Forwarded-For validation for proxy environments (Render, Heroku, etc.)
+    validate: {
+      xForwardedForHeader: false,
+    },
+    // Skip failed requests to avoid counting errors
+    skipFailedRequests: false,
+    skipSuccessfulRequests: false,
   };
 
   if (redisAvailable) {
@@ -32,8 +40,8 @@ function createRateLimiter(windowMs: number, max: number, message: string) {
         sendCommand: (...args: any[]) => getRedisClient().call(...args),
         prefix: 'spark:ratelimit:',
       });
-    } catch {
-      // Fall back to memory store
+    } catch (error) {
+      console.warn('Redis store failed, using memory store:', error);
     }
   }
 
