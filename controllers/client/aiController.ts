@@ -7,9 +7,6 @@ import { logger } from '../../utils/logger';
 // A1 — CHAT WITH HDM AI
 // ====================================================================
 
-// @desc    Ask HDM AI
-// @route   POST /api/v1/ai/chat/ask
-// @access  Private
 export async function chatAsk(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, language, recentMessages } = req.body;
@@ -21,9 +18,6 @@ export async function chatAsk(req: Request, res: Response, next: NextFunction): 
   }
 }
 
-// @desc    Translate text
-// @route   POST /api/v1/ai/chat/translate
-// @access  Private
 export async function chatTranslate(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, targetLanguage } = req.body;
@@ -35,9 +29,6 @@ export async function chatTranslate(req: Request, res: Response, next: NextFunct
   }
 }
 
-// @desc    Rewrite text
-// @route   POST /api/v1/ai/chat/rewrite
-// @access  Private
 export async function chatRewrite(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, style } = req.body;
@@ -49,9 +40,6 @@ export async function chatRewrite(req: Request, res: Response, next: NextFunctio
   }
 }
 
-// @desc    Draft message
-// @route   POST /api/v1/ai/chat/draft
-// @access  Private
 export async function chatDraft(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { prompt, tone } = req.body;
@@ -63,9 +51,6 @@ export async function chatDraft(req: Request, res: Response, next: NextFunction)
   }
 }
 
-// @desc    Explain concept
-// @route   POST /api/v1/ai/chat/explain
-// @access  Private
 export async function chatExplain(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, level } = req.body;
@@ -77,9 +62,6 @@ export async function chatExplain(req: Request, res: Response, next: NextFunctio
   }
 }
 
-// @desc    Summarize text
-// @route   POST /api/v1/ai/chat/summarize
-// @access  Private
 export async function chatSummarize(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, maxLength } = req.body;
@@ -91,9 +73,6 @@ export async function chatSummarize(req: Request, res: Response, next: NextFunct
   }
 }
 
-// @desc    Summarize unread messages
-// @route   POST /api/v1/ai/chat/summarize-unread
-// @access  Private
 export async function chatSummarizeUnread(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { messages } = req.body;
@@ -105,9 +84,6 @@ export async function chatSummarizeUnread(req: Request, res: Response, next: Nex
   }
 }
 
-// @desc    Voice to text
-// @route   POST /api/v1/ai/chat/voice
-// @access  Private
 export async function chatVoice(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { audioBase64, language } = req.body;
@@ -119,9 +95,6 @@ export async function chatVoice(req: Request, res: Response, next: NextFunction)
   }
 }
 
-// @desc    Suggest emoji
-// @route   POST /api/v1/ai/chat/emoji-suggest
-// @access  Private
 export async function chatEmojiSuggest(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, count } = req.body;
@@ -133,9 +106,6 @@ export async function chatEmojiSuggest(req: Request, res: Response, next: NextFu
   }
 }
 
-// @desc    Autocomplete text
-// @route   POST /api/v1/ai/chat/autocomplete
-// @access  Private
 export async function chatAutocomplete(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { partialText, maxSuggestions, recentMessages } = req.body;
@@ -147,9 +117,6 @@ export async function chatAutocomplete(req: Request, res: Response, next: NextFu
   }
 }
 
-// @desc    Detect tone
-// @route   POST /api/v1/ai/chat/tone-detect
-// @access  Private
 export async function chatToneDetect(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text } = req.body;
@@ -161,9 +128,6 @@ export async function chatToneDetect(req: Request, res: Response, next: NextFunc
   }
 }
 
-// @desc    Format text
-// @route   POST /api/v1/ai/chat/format
-// @access  Private
 export async function chatFormat(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, formatType } = req.body;
@@ -175,9 +139,6 @@ export async function chatFormat(req: Request, res: Response, next: NextFunction
   }
 }
 
-// @desc    Generate quote reply
-// @route   POST /api/v1/ai/chat/quote-reply
-// @access  Private
 export async function chatQuoteReply(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { originalMessage, reply } = req.body;
@@ -189,9 +150,6 @@ export async function chatQuoteReply(req: Request, res: Response, next: NextFunc
   }
 }
 
-// @desc    Generate poll
-// @route   POST /api/v1/ai/chat/poll-generate
-// @access  Private
 export async function chatPollGenerate(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { topic, optionsCount } = req.body;
@@ -203,9 +161,6 @@ export async function chatPollGenerate(req: Request, res: Response, next: NextFu
   }
 }
 
-// @desc    Context-aware reply
-// @route   POST /api/v1/ai/chat/context-reply
-// @access  Private
 export async function chatContextReply(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, contextMessages } = req.body;
@@ -221,9 +176,6 @@ export async function chatContextReply(req: Request, res: Response, next: NextFu
 // A2 — SMART REPLY
 // ====================================================================
 
-// @desc    Smart reply suggestions
-// @route   POST /api/v1/ai/smart/reply
-// @access  Private
 export async function smartReply(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, count, tone, context } = req.body;
@@ -235,9 +187,6 @@ export async function smartReply(req: Request, res: Response, next: NextFunction
   }
 }
 
-// @desc    Quick reply suggestions
-// @route   POST /api/v1/ai/smart/quick-reply
-// @access  Private
 export async function smartQuickReply(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, count } = req.body;
@@ -249,9 +198,6 @@ export async function smartQuickReply(req: Request, res: Response, next: NextFun
   }
 }
 
-// @desc    Reply with context
-// @route   POST /api/v1/ai/smart/reply-context
-// @access  Private
 export async function smartReplyContext(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, previousMessages } = req.body;
@@ -263,9 +209,6 @@ export async function smartReplyContext(req: Request, res: Response, next: NextF
   }
 }
 
-// @desc    Reply with tone
-// @route   POST /api/v1/ai/smart/reply-tone
-// @access  Private
 export async function smartReplyTone(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, targetTone } = req.body;
@@ -277,9 +220,6 @@ export async function smartReplyTone(req: Request, res: Response, next: NextFunc
   }
 }
 
-// @desc    Reply in language
-// @route   POST /api/v1/ai/smart/reply-language
-// @access  Private
 export async function smartReplyLanguage(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, language } = req.body;
@@ -295,9 +235,6 @@ export async function smartReplyLanguage(req: Request, res: Response, next: Next
 // A3 — MESSAGE INTELLIGENCE
 // ====================================================================
 
-// @desc    Analyze sentiment
-// @route   POST /api/v1/ai/intel/sentiment
-// @access  Private
 export async function intelSentiment(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, context } = req.body;
@@ -309,9 +246,6 @@ export async function intelSentiment(req: Request, res: Response, next: NextFunc
   }
 }
 
-// @desc    Extract keywords
-// @route   POST /api/v1/ai/intel/keywords
-// @access  Private
 export async function intelKeywords(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, count } = req.body;
@@ -323,9 +257,6 @@ export async function intelKeywords(req: Request, res: Response, next: NextFunct
   }
 }
 
-// @desc    Extract entities
-// @route   POST /api/v1/ai/intel/entities
-// @access  Private
 export async function intelEntities(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text } = req.body;
@@ -337,9 +268,6 @@ export async function intelEntities(req: Request, res: Response, next: NextFunct
   }
 }
 
-// @desc    Read receipt prediction
-// @route   POST /api/v1/ai/intel/read-receipt
-// @access  Private
 export async function intelReadReceipt(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, senderHistory } = req.body;
@@ -351,9 +279,6 @@ export async function intelReadReceipt(req: Request, res: Response, next: NextFu
   }
 }
 
-// @desc    Detect urgency
-// @route   POST /api/v1/ai/intel/urgency
-// @access  Private
 export async function intelUrgency(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message } = req.body;
@@ -365,9 +290,6 @@ export async function intelUrgency(req: Request, res: Response, next: NextFuncti
   }
 }
 
-// @desc    Detect language
-// @route   POST /api/v1/ai/intel/language-detect
-// @access  Private
 export async function intelLanguageDetect(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text } = req.body;
@@ -383,9 +305,6 @@ export async function intelLanguageDetect(req: Request, res: Response, next: Nex
 // A4 — SAFETY & MODERATION
 // ====================================================================
 
-// @desc    Check spam
-// @route   POST /api/v1/ai/safety/spam
-// @access  Private
 export async function safetySpam(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, userHistory } = req.body;
@@ -397,9 +316,6 @@ export async function safetySpam(req: Request, res: Response, next: NextFunction
   }
 }
 
-// @desc    Check hate speech
-// @route   POST /api/v1/ai/safety/hate-speech
-// @access  Private
 export async function safetyHateSpeech(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, context } = req.body;
@@ -411,9 +327,6 @@ export async function safetyHateSpeech(req: Request, res: Response, next: NextFu
   }
 }
 
-// @desc    Check NSFW
-// @route   POST /api/v1/ai/safety/nsfw
-// @access  Private
 export async function safetyNsfw(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { content, contentType } = req.body;
@@ -425,9 +338,6 @@ export async function safetyNsfw(req: Request, res: Response, next: NextFunction
   }
 }
 
-// @desc    Check child safety
-// @route   POST /api/v1/ai/safety/child-safety
-// @access  Private
 export async function safetyChildSafety(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { content, userAge } = req.body;
@@ -439,9 +349,6 @@ export async function safetyChildSafety(req: Request, res: Response, next: NextF
   }
 }
 
-// @desc    Check impersonation
-// @route   POST /api/v1/ai/safety/impersonation
-// @access  Private
 export async function safetyImpersonation(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, claimedIdentity, context } = req.body;
@@ -453,9 +360,6 @@ export async function safetyImpersonation(req: Request, res: Response, next: Nex
   }
 }
 
-// @desc    Check self harm
-// @route   POST /api/v1/ai/safety/self-harm
-// @access  Private
 export async function safetySelfHarm(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { text, recentMessages, userLocation } = req.body;
@@ -467,9 +371,6 @@ export async function safetySelfHarm(req: Request, res: Response, next: NextFunc
   }
 }
 
-// @desc    Check link safety
-// @route   POST /api/v1/ai/safety/link-check
-// @access  Private
 export async function safetyLinkCheck(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { url } = req.body;
@@ -485,9 +386,6 @@ export async function safetyLinkCheck(req: Request, res: Response, next: NextFun
 // A5 — GROUP CHAT AI
 // ====================================================================
 
-// @desc    Group summary
-// @route   POST /api/v1/ai/group/summary
-// @access  Private
 export async function groupSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { messages, maxLength, groupName } = req.body;
@@ -499,9 +397,6 @@ export async function groupSummary(req: Request, res: Response, next: NextFuncti
   }
 }
 
-// @desc    Group highlights
-// @route   POST /api/v1/ai/group/highlights
-// @access  Private
 export async function groupHighlights(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { messages, count } = req.body;
@@ -513,9 +408,6 @@ export async function groupHighlights(req: Request, res: Response, next: NextFun
   }
 }
 
-// @desc    Poll results analysis
-// @route   POST /api/v1/ai/group/poll-results
-// @access  Private
 export async function groupPollResults(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { pollData } = req.body;
@@ -527,9 +419,6 @@ export async function groupPollResults(req: Request, res: Response, next: NextFu
   }
 }
 
-// @desc    Mention suggestions
-// @route   POST /api/v1/ai/group/mention-suggest
-// @access  Private
 export async function groupMentionSuggest(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { partialName, groupMembers } = req.body;
@@ -541,9 +430,6 @@ export async function groupMentionSuggest(req: Request, res: Response, next: Nex
   }
 }
 
-// @desc    Activity recap
-// @route   POST /api/v1/ai/group/activity-recap
-// @access  Private
 export async function groupActivityRecap(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { messages, period, groupName } = req.body;
@@ -559,9 +445,6 @@ export async function groupActivityRecap(req: Request, res: Response, next: Next
 // A6 — PRIVACY & SECURITY
 // ====================================================================
 
-// @desc    Privacy advisor
-// @route   POST /api/v1/ai/privacy/advisor
-// @access  Private
 export async function privacyAdvisor(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { concern, context } = req.body;
@@ -573,9 +456,6 @@ export async function privacyAdvisor(req: Request, res: Response, next: NextFunc
   }
 }
 
-// @desc    Data leak detection
-// @route   POST /api/v1/ai/privacy/data-leak
-// @access  Private
 export async function privacyDataLeak(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message, scanType } = req.body;
@@ -587,9 +467,6 @@ export async function privacyDataLeak(req: Request, res: Response, next: NextFun
   }
 }
 
-// @desc    Encryption suggestion
-// @route   POST /api/v1/ai/privacy/encrypt-suggest
-// @access  Private
 export async function privacyEncryptSuggest(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { message } = req.body;
@@ -601,9 +478,6 @@ export async function privacyEncryptSuggest(req: Request, res: Response, next: N
   }
 }
 
-// @desc    Audit log analysis
-// @route   POST /api/v1/ai/privacy/audit-log
-// @access  Private
 export async function privacyAuditLog(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { period, data } = req.body;
@@ -619,9 +493,6 @@ export async function privacyAuditLog(req: Request, res: Response, next: NextFun
 // A7 — SMART SEARCH
 // ====================================================================
 
-// @desc    Semantic search
-// @route   POST /api/v1/ai/search/semantic
-// @access  Private
 export async function searchSemantic(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { query, documents, limit } = req.body;
@@ -633,9 +504,6 @@ export async function searchSemantic(req: Request, res: Response, next: NextFunc
   }
 }
 
-// @desc    Search messages
-// @route   POST /api/v1/ai/search/messages
-// @access  Private
 export async function searchMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { query, limit } = req.body;
@@ -647,9 +515,6 @@ export async function searchMessages(req: Request, res: Response, next: NextFunc
   }
 }
 
-// @desc    Search contacts
-// @route   POST /api/v1/ai/search/contacts
-// @access  Private
 export async function searchContacts(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { query, frequentContacts } = req.body;
@@ -665,9 +530,6 @@ export async function searchContacts(req: Request, res: Response, next: NextFunc
 // SYSTEM
 // ====================================================================
 
-// @desc    AI health check
-// @route   GET /api/v1/ai/health
-// @access  Private
 export async function aiHealth(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const result = await hdmAiService.aiHealth();
@@ -678,9 +540,6 @@ export async function aiHealth(req: Request, res: Response, next: NextFunction):
   }
 }
 
-// @desc    AI stats
-// @route   GET /api/v1/ai/stats
-// @access  Private
 export async function aiStats(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const result = await hdmAiService.aiStats();
