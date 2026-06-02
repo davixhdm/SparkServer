@@ -2,19 +2,23 @@
   "name": "spark-server",
   "version": "1.0.0",
   "description": "Spark Messenger — HDM Powered Privacy-First Messaging Platform",
-  "main": "dist/server.js",
+  "main": "server.ts",
   "scripts": {
     "dev": "tsx watch server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "npx tsx server.ts",
     "start:prod": "NODE_ENV=production node dist/server.js",
+    "start:build": "node dist/server.js",
+    "render-start": "npx tsx server.ts",
     "admin": "tsx scripts/admin.ts",
     "seed": "tsx scripts/seed.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"**/*.ts\"",
     "test": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "clean": "rm -rf dist",
+    "rebuild": "npm run clean && npm run build"
   },
   "keywords": [
     "messenger",
