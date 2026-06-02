@@ -1,0 +1,44 @@
+import { Router } from 'express';
+import authRoutes from './authRoutes';
+import userRoutes from './userRoutes';
+import chatRoutes from './chatRoutes';
+import messageRoutes from './messageRoutes';
+import groupRoutes from './groupRoutes';
+import statusRoutes from './statusRoutes';
+import callRoutes from './callRoutes';
+import contactRoutes from './contactRoutes';
+import privacyRoutes from './privacyRoutes';
+import paymentRoutes from './paymentRoutes';
+import backupRoutes from './backupRoutes';
+import notificationRoutes from './notificationRoutes';
+import searchRoutes from './searchRoutes';
+import deeplinkRoutes from './deeplinkRoutes';
+import aiRoutes from './aiRoutes';
+import legalRoutes from './legalRoutes';
+import reportRoutes from './reportRoutes';
+import uploadRoutes from './uploadRoutes';
+import settingsRoutes from './settingsRoutes';
+
+const router = Router();
+
+router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
+router.use('/chats', chatRoutes);
+router.use('/messages', messageRoutes);
+router.use('/groups', groupRoutes);
+router.use('/status', statusRoutes);
+router.use('/calls', callRoutes);
+router.use('/contacts', contactRoutes);
+router.use('/privacy', privacyRoutes);
+router.use('/payments', paymentRoutes);
+router.use('/backups', backupRoutes);
+router.use('/notifications', notificationRoutes);
+router.use('/search', searchRoutes);
+router.use('/deeplinks', deeplinkRoutes);
+router.use('/ai', aiRoutes);
+router.use('/legal', legalRoutes);
+router.use('/reports', reportRoutes);
+router.use('/upload', uploadRoutes);
+router.use('/settings', settingsRoutes);
+
+export default router;

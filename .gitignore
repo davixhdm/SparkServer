@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+
+# Uploads (temporary)
+uploads/*
+!uploads/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+coverage/
+
+# Docker
+.docker/
+
+# Backup files
+*.backup
+*.dump
+
+# PM2
+.pm2/
+ecosystem.config.js

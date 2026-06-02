@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  # ====================================================================
+  # MongoDB
+  # ====================================================================
+  mongo:
+    image: mongo:7.0
+    container_name: spark-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: spark_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks:
+      - spark-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ====================================================================
+  # Redis
+  # ====================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: spark-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - spark-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ====================================================================
+  # Spark Server (Development)
+  # ====================================================================
+  spark-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: spark-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/spark_db
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - spark-network
+    command: npm run dev
+
+volumes:
+  mongo_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  spark-network:
+    driver: bridge

@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "baseUrl": ".",
+    "paths": {
+      "@config/*": ["config/*"],
+      "@models/*": ["models/*"],
+      "@routes/*": ["routes/*"],
+      "@controllers/*": ["controllers/*"],
+      "@services/*": ["services/*"],
+      "@middleware/*": ["middleware/*"],
+      "@socket/*": ["socket/*"],
+      "@jobs/*": ["jobs/*"],
+      "@utils/*": ["utils/*"],
+      "@types/*": ["types/*"]
+    }
+  },
+  "include": [
+    "*.ts",
+    "config/**/*.ts",
+    "models/**/*.ts",
+    "routes/**/*.ts",
+    "controllers/**/*.ts",
+    "services/**/*.ts",
+    "middleware/**/*.ts",
+    "socket/**/*.ts",
+    "jobs/**/*.ts",
+    "utils/**/*.ts",
+    "types/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist", "tests", "logs", "uploads"]
+}
