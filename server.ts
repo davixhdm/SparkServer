@@ -258,7 +258,7 @@ async function printBanner(): Promise<void> {
   console.log('  ⚡              Powered by HDM                       ⚡');
   console.log('  ⚡ ═══════════════════════════════════════════════ ⚡');
   console.log('');
-  console.log(`  🚀 Server:        http://localhost:${env.PORT}`);
+  console.log(`  🚀 Server:        ${env.APP_URL || `http://localhost:${env.PORT}`}`);
   console.log(`  🌐 Client:        ${env.CLIENT_URL}`);
   console.log(`  🛠️  Admin:         ${env.ADMIN_URL}`);
   console.log(`  📪 Environment:   ${env.NODE_ENV}`);

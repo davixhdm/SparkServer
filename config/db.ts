@@ -6,6 +6,36 @@ import { logger } from '../utils/logger';
 let redisClient: Redis | null = null;
 let redisAvailable = false;
 
+// Helper to get Redis URL with multiple fallbacks
+function getRedisUrl(): string {
+  // Priority 1: Direct REDIS_URL from environment
+  if (process.env.REDIS_URL && process.env.REDIS_URL !== 'redis://localhost:6379') {
+    logger.info(`Redis: Using REDIS_URL from env`);
+    return process.env.REDIS_URL;
+  }
+  
+  // Priority 2: From env config
+  if (env.REDIS_URL && env.REDIS_URL !== 'redis://localhost:6379') {
+    logger.info(`Redis: Using REDIS_URL from env config`);
+    return env.REDIS_URL;
+  }
+  
+  // Priority 3: Upstash REST URL converted to Redis protocol
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    const restUrl = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+    const host = restUrl.replace('https://', '').replace('.upstash.io', '');
+    const redisUrl = `rediss://default:${token}@${host}.upstash.io:6379`;
+    logger.info(`Redis: Using Upstash REST URL converted`);
+    return redisUrl;
+  }
+  
+  // Priority 4: Hardcoded Upstash fallback for Render
+  const fallbackUrl = 'rediss://default:gQAAAAAAAYbYAAIgcDJmMDk1MTNhYjM2YWE0NjQ0YWY0MDRlOWFiZmUwNmU1Zg@daring-fowl-100056.upstash.io:6379';
+  logger.info(`Redis: Using fallback Upstash URL`);
+  return fallbackUrl;
+}
+
 export async function connectMongoDB(): Promise<void> {
   try {
     mongoose.connection.on('connecting', () => {
@@ -32,7 +62,8 @@ export async function connectMongoDB(): Promise<void> {
       family: 4,
     });
 
-    logger.info(`MongoDB: Connected to ${env.MONGODB_URI.split('@').pop() || 'localhost'}`);
+    const dbHost = env.MONGODB_URI.split('@').pop() || 'localhost';
+    logger.info(`MongoDB: Connected to ${dbHost}`);
   } catch (error) {
     logger.error('MongoDB: Failed to connect', { error });
     process.exit(1);
@@ -40,44 +71,68 @@ export async function connectMongoDB(): Promise<void> {
 }
 
 export async function connectRedis(): Promise<Redis | null> {
-  if (redisClient) {
+  if (redisClient && redisAvailable) {
     return redisClient;
   }
 
+  const redisUrl = getRedisUrl();
+  
+  if (!redisUrl) {
+    logger.warn('Redis: No URL provided — running without cache');
+    redisAvailable = false;
+    return null;
+  }
+
+  const isTls = redisUrl.startsWith('rediss://') || process.env.REDIS_TLS === 'true';
+  
+  logger.info(`Redis: Connecting to ${redisUrl.substring(0, 50)}...`);
+
   try {
-    redisClient = new Redis(env.REDIS_URL, {
-      maxRetriesPerRequest: 1,
+    redisClient = new Redis(redisUrl, {
+      maxRetriesPerRequest: 3,
       retryStrategy(times) {
-        if (times > 3) {
+        if (times > 5) {
+          logger.error(`Redis: Max retries reached (${times})`);
           return null;
         }
-        return Math.min(times * 200, 1000);
+        const delay = Math.min(times * 1000, 5000);
+        logger.warn(`Redis: Retry attempt ${times} in ${delay}ms`);
+        return delay;
       },
+      tls: isTls ? {} : undefined,
+      connectTimeout: 10000,
       lazyConnect: true,
       enableOfflineQueue: false,
     });
 
-    redisClient.on('error', () => {
+    redisClient.on('error', (err) => {
+      logger.error('Redis: Connection error', { error: err.message });
       redisAvailable = false;
     });
 
+    redisClient.on('connect', () => {
+      logger.info('Redis: Connected successfully');
+      redisAvailable = true;
+    });
+
     redisClient.on('close', () => {
+      logger.warn('Redis: Connection closed');
       redisAvailable = false;
     });
 
     await redisClient.connect();
     await redisClient.ping();
-
     redisAvailable = true;
 
-    logger.info(`Redis: Connected to ${env.REDIS_URL.split('@').pop() || 'localhost'}`);
+    const redisHost = redisUrl.split('@').pop() || 'Upstash';
+    logger.info(`Redis: Connected to ${redisHost}`);
     return redisClient;
-  } catch {
+  } catch (error: any) {
+    logger.error('Redis: Failed to connect', { error: error.message });
     if (redisClient) {
       try { redisClient.disconnect(); } catch {}
       redisClient = null;
     }
-    logger.warn('Redis: Not available — running without cache and queues');
     redisAvailable = false;
     return null;
   }
@@ -102,14 +157,14 @@ export async function disconnectDatabases(): Promise<void> {
       redisAvailable = false;
       logger.info('Redis: Disconnected');
     }
-  } catch {
-    // Redis disconnect failed — non-critical
+  } catch (error) {
+    logger.warn('Redis: Disconnect failed', { error });
   }
 
   try {
     await mongoose.disconnect();
     logger.info('MongoDB: Disconnected');
-  } catch {
-    // MongoDB disconnect failed
+  } catch (error) {
+    logger.warn('MongoDB: Disconnect failed', { error });
   }
 }

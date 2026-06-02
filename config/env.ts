@@ -1,3 +1,4 @@
+// config/env.ts
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -169,6 +170,33 @@ function getEnvArray(key: string, defaultValue?: string): string[] {
   return value.split(',').map((item) => item.trim()).filter((item) => item.length > 0);
 }
 
+// Helper to get Redis URL with priority
+function getRedisUrl(): string {
+  // Priority 1: Direct REDIS_URL from environment
+  if (process.env.REDIS_URL && process.env.REDIS_URL !== 'redis://localhost:6379') {
+    return process.env.REDIS_URL;
+  }
+  
+  // Priority 2: Upstash REST URL converted to Redis protocol
+  if (process.env.UPSTASH_REDIS_REST_URL) {
+    const restUrl = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+    if (restUrl && token) {
+      const host = restUrl.replace('https://', '').replace('.upstash.io', '');
+      return `rediss://default:${token}@${host}.upstash.io:6379`;
+    }
+  }
+  
+  // Priority 3: Render external URL fallback
+  if (process.env.RENDER_EXTERNAL_URL) {
+    // Use the hardcoded Upstash URL as fallback for Render
+    return 'rediss://default:gQAAAAAAAYbYAAIgcDJmMDk1MTNhYjM2YWE0NjQ0YWY0MDRlOWFiZmUwNmU1Zg@daring-fowl-100056.upstash.io:6379';
+  }
+  
+  // Priority 4: Default from .env or localhost
+  return process.env.REDIS_URL || 'redis://localhost:6379';
+}
+
 const env: EnvConfig = {
   NODE_ENV: getEnv('NODE_ENV', 'development'),
   PORT: getEnvNumber('PORT', '5000'),
@@ -180,7 +208,7 @@ const env: EnvConfig = {
   ADMIN_URL: getEnv('ADMIN_URL', 'http://localhost:3001'),
 
   MONGODB_URI: getEnv('MONGODB_URI', 'mongodb://localhost:27017/spark_db'),
-  REDIS_URL: getEnv('REDIS_URL', 'redis://localhost:6379'),
+  REDIS_URL: getRedisUrl(),  // ← Use the helper function
 
   JWT_SECRET: getEnv('JWT_SECRET'),
   JWT_EXPIRE: getEnv('JWT_EXPIRE', '7d'),
