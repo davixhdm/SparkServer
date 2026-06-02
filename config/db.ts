@@ -1,3 +1,4 @@
+// config/db.ts
 import mongoose from 'mongoose';
 import Redis from 'ioredis';
 import env from './env';
@@ -6,35 +7,8 @@ import { logger } from '../utils/logger';
 let redisClient: Redis | null = null;
 let redisAvailable = false;
 
-// Helper to get Redis URL with multiple fallbacks
-function getRedisUrl(): string {
-  // Priority 1: Direct REDIS_URL from environment
-  if (process.env.REDIS_URL && process.env.REDIS_URL !== 'redis://localhost:6379') {
-    logger.info(`Redis: Using REDIS_URL from env`);
-    return process.env.REDIS_URL;
-  }
-  
-  // Priority 2: From env config
-  if (env.REDIS_URL && env.REDIS_URL !== 'redis://localhost:6379') {
-    logger.info(`Redis: Using REDIS_URL from env config`);
-    return env.REDIS_URL;
-  }
-  
-  // Priority 3: Upstash REST URL converted to Redis protocol
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-    const restUrl = process.env.UPSTASH_REDIS_REST_URL;
-    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-    const host = restUrl.replace('https://', '').replace('.upstash.io', '');
-    const redisUrl = `rediss://default:${token}@${host}.upstash.io:6379`;
-    logger.info(`Redis: Using Upstash REST URL converted`);
-    return redisUrl;
-  }
-  
-  // Priority 4: Hardcoded Upstash fallback for Render
-  const fallbackUrl = 'rediss://default:gQAAAAAAAYbYAAIgcDJmMDk1MTNhYjM2YWE0NjQ0YWY0MDRlOWFiZmUwNmU1Zg@daring-fowl-100056.upstash.io:6379';
-  logger.info(`Redis: Using fallback Upstash URL`);
-  return fallbackUrl;
-}
+// DIRECT HARDCODED URL - Copy exactly as is
+const REDIS_URL = 'rediss://default:gQAAAAAAAYbYAAIgcDJmMDk1MTNhYjM2YWE0NjQ0YWY0MDRlOWFiZmUwNmU1Zg@daring-fowl-100056.upstash.io:6379';
 
 export async function connectMongoDB(): Promise<void> {
   try {
@@ -75,64 +49,50 @@ export async function connectRedis(): Promise<Redis | null> {
     return redisClient;
   }
 
-  const redisUrl = getRedisUrl();
-  
-  if (!redisUrl) {
-    logger.warn('Redis: No URL provided — running without cache');
-    redisAvailable = false;
-    return null;
-  }
-
-  const isTls = redisUrl.startsWith('rediss://') || process.env.REDIS_TLS === 'true';
-  
-  logger.info(`Redis: Connecting to ${redisUrl.substring(0, 50)}...`);
+  console.log('⏳ Connecting to Redis on Render...');
+  console.log('📍 Using Upstash Redis');
 
   try {
-    redisClient = new Redis(redisUrl, {
+    redisClient = new Redis(REDIS_URL, {
+      tls: {},
       maxRetriesPerRequest: 3,
       retryStrategy(times) {
+        console.log(`🔄 Redis retry ${times}`);
         if (times > 5) {
-          logger.error(`Redis: Max retries reached (${times})`);
+          console.error('❌ Redis max retries reached');
           return null;
         }
-        const delay = Math.min(times * 1000, 5000);
-        logger.warn(`Redis: Retry attempt ${times} in ${delay}ms`);
-        return delay;
+        return Math.min(times * 2000, 10000);
       },
-      tls: isTls ? {} : undefined,
-      connectTimeout: 10000,
-      lazyConnect: true,
-      enableOfflineQueue: false,
-    });
-
-    redisClient.on('error', (err) => {
-      logger.error('Redis: Connection error', { error: err.message });
-      redisAvailable = false;
+      connectTimeout: 15000,
     });
 
     redisClient.on('connect', () => {
-      logger.info('Redis: Connected successfully');
+      console.log('📡 Redis: Connecting...');
+    });
+
+    redisClient.on('ready', () => {
+      console.log('✅ Redis: Connected and ready!');
       redisAvailable = true;
     });
 
-    redisClient.on('close', () => {
-      logger.warn('Redis: Connection closed');
+    redisClient.on('error', (err) => {
+      console.error('❌ Redis error:', err.message);
       redisAvailable = false;
     });
 
     await redisClient.connect();
-    await redisClient.ping();
-    redisAvailable = true;
-
-    const redisHost = redisUrl.split('@').pop() || 'Upstash';
-    logger.info(`Redis: Connected to ${redisHost}`);
-    return redisClient;
-  } catch (error: any) {
-    logger.error('Redis: Failed to connect', { error: error.message });
-    if (redisClient) {
-      try { redisClient.disconnect(); } catch {}
-      redisClient = null;
+    const pong = await redisClient.ping();
+    
+    if (pong === 'PONG') {
+      console.log('✅ Redis PONG received - Connected to Upstash!');
+      redisAvailable = true;
+      return redisClient;
     }
+    
+    throw new Error('Invalid response');
+  } catch (error: any) {
+    console.error('❌ Redis connection failed:', error.message);
     redisAvailable = false;
     return null;
   }
